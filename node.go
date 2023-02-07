@@ -81,3 +81,21 @@ func (node *Node[T]) insertNode(data T) *Node[T] {
 
 	return nil
 }
+
+func (node *Node[T]) find(x T) bool {
+	var next *Node[T]
+
+	if node.Data == x {
+		return true
+	}
+
+	if x < node.Data && node.Left != nil {
+		next = node.Left
+	} else if x > node.Data && node.Right != nil {
+		next = node.Right
+	} else {
+		return false
+	}
+
+	return next.find(x)
+}

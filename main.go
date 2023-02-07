@@ -9,6 +9,7 @@ type BinarySearchTree[T Number] interface {
 	GetBiggestNode() *Node[T]
 	SortAscVals() []T
 	SortDescVals() []T
+	IsPresent(T) bool
 	Add(T)
 }
 
@@ -54,6 +55,10 @@ func (t Tree[T]) SortDescVals() []T {
 	return vals
 }
 
+func (t Tree[T]) IsPresent(x T) bool {
+	return t.Root.find(x)
+}
+
 func (t Tree[T]) Add(data T) {
 	t.Root.insertNode(data)
 }
@@ -63,13 +68,9 @@ func main() {
 	root.Add(2)
 	root.Add(150)
 
-	fmt.Println(root.GetSmallestVal())
-	fmt.Printf("%+v\n", root.GetSmallestNode())
-	fmt.Println(root.GetBiggestVal())
-	fmt.Printf("%+v\n", root.GetBiggestNode())
-	arr := root.SortDescVals()
-	for _, n := range arr {
-		fmt.Println(n)
-	}
+	fmt.Println(root.IsPresent(150))
+	fmt.Println(root.IsPresent(100))
+	fmt.Println(root.IsPresent(2))
+	fmt.Println(root.IsPresent(6))
 	//fmt.Printf("%+v", root.NodesInAscOrder())
 }
