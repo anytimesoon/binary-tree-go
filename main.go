@@ -1,78 +1,61 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
-type Number interface {
-	~float32 | ~float64 | ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+type BinarySearchTree[T Number] interface {
+	GetSmallestVal() T
+	GetBiggestVal() T
+	GetSmallestNode() *Node[T]
+	GetBiggestNode() *Node[T]
+	SortAscVals() []T
+	SortDescVals() []T
+	Add(T)
 }
 
-type TreeNode[K Number] struct {
-	Data   K
-	Left   *TreeNode[K]
-	Right  *TreeNode[K]
-	Parent *TreeNode[K]
+type Tree[T Number] struct {
+	Root       *Node[T]
+	TotalNodes int
 }
 
-func createNode[K Number](data K, parent *TreeNode[K]) *TreeNode[K] {
-	return &TreeNode[K]{data, nil, nil, parent}
+func NewTree[T Number](data T) BinarySearchTree[T] {
+	return Tree[T]{
+		Root:       createNode[T](data, nil),
+		TotalNodes: 1,
+	}
 }
 
-func NewTree[K Number](data K) *TreeNode[K] {
-	return createNode[K](data, nil)
-}
-
-func (node *TreeNode[K]) GetLowestValue() K {
-	root := node.GetRoot()
-	lowest := root.traverseFullyLeft()
+func (t Tree[T]) GetSmallestVal() T {
+	lowest := t.Root.traverseFullyLeft()
 	return lowest.Data
 }
 
-func (node *TreeNode[K]) traverseFullyLeft() *TreeNode[K] {
-	if node.Left == nil {
-		return node
-	} else {
-		return node.Left.traverseFullyLeft()
-	}
+func (t Tree[T]) GetSmallestNode() *Node[T] {
+	return t.Root.traverseFullyLeft()
 }
 
-func (node *TreeNode[K]) Add(data K) {
-	root := node.GetRoot()
-	root.insertNode(data)
+func (t Tree[T]) GetBiggestVal() T {
+	biggest := t.Root.traverseFullyRight()
+	return biggest.Data
 }
 
-func (node *TreeNode[K]) GetRoot() *TreeNode[K] {
-	if node.Parent == nil {
-		return node
-	} else {
-		return node.Parent.GetRoot()
-	}
+func (t Tree[T]) GetBiggestNode() *Node[T] {
+	return t.Root.traverseFullyRight()
 }
 
-func (node *TreeNode[K]) insertNode(data K) *TreeNode[K] {
-	var newNode *TreeNode[K]
-	if newNode != nil {
-		return newNode
-	} else {
-		if data > node.Data {
-			if node.Right == nil {
-				newNode = createNode[K](data, node)
-				node.Right = newNode
-				return newNode
-			}
-			node.Right.insertNode(data)
-		} else {
-			if node.Left == nil {
-				newNode = createNode[K](data, node)
-				node.Left = newNode
-				return newNode
-			}
-			node.Left.insertNode(data)
-		}
-	}
+func (t Tree[T]) SortAscVals() []T {
+	vals := make([]T, 0)
+	t.Root.ascOrderVals(&vals)
+	return vals
+}
 
-	return nil
+func (t Tree[T]) SortDescVals() []T {
+	vals := make([]T, 0)
+	t.Root.descOrderVals(&vals)
+	return vals
+}
+
+func (t Tree[T]) Add(data T) {
+	t.Root.insertNode(data)
 }
 
 func main() {
@@ -80,5 +63,13 @@ func main() {
 	root.Add(2)
 	root.Add(150)
 
-	fmt.Println(root.GetLowestValue())
+	fmt.Println(root.GetSmallestVal())
+	fmt.Printf("%+v\n", root.GetSmallestNode())
+	fmt.Println(root.GetBiggestVal())
+	fmt.Printf("%+v\n", root.GetBiggestNode())
+	arr := root.SortDescVals()
+	for _, n := range arr {
+		fmt.Println(n)
+	}
+	//fmt.Printf("%+v", root.NodesInAscOrder())
 }
